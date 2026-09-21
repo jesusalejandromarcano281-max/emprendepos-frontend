@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { FiHome, FiPackage, FiUsers, FiShoppingCart, FiDollarSign, FiSettings, FiBriefcase, FiLogOut, FiMenu, FiGlobe } from 'react-icons/fi';
+import { FiHome, FiPackage, FiUsers, FiShoppingCart, FiDollarSign, FiSettings, FiBriefcase, FiLogOut, FiMenu, FiGlobe, FiCreditCard } from 'react-icons/fi';
 import api from '../api/axios';
 
 const Layout = () => {
@@ -29,6 +29,7 @@ const Layout = () => {
     { to: '/clientes', label: 'Clientes', icon: <FiUsers className="mr-3" /> },
     { to: '/ventas', label: 'Ventas', icon: <FiShoppingCart className="mr-3" /> },
     { to: '/gastos', label: 'Gastos e Ingresos', icon: <FiDollarSign className="mr-3" /> },
+    { to: '/pagos', label: 'Mi Suscripción', icon: <FiCreditCard className="mr-3" /> },
   ];
 
   if (user && user.role === 'admin') {
@@ -38,6 +39,7 @@ const Layout = () => {
 
   if (user && user.is_superadmin) {
     navLinks.push({ to: '/superadmin/comercios', label: 'Gestión SaaS Comercios', icon: <FiGlobe className="mr-3 text-emerald-400" /> });
+    navLinks.push({ to: '/superadmin/pagos', label: 'Pagos Pendientes', icon: <FiCreditCard className="mr-3 text-yellow-400" /> });
   }
 
   const navClass = ({ isActive }) =>

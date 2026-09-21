@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiPlus, FiSearch, FiAlertCircle } from 'react-icons/fi';
+import { FiPlus, FiSearch, FiAlertCircle, FiPackage, FiUpload } from 'react-icons/fi';
 import api from '../api/axios';
 import Table from '../components/ui/Table';
 import Button from '../components/ui/Button';
@@ -16,7 +16,7 @@ const Products = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
-    nombre: '', descripcion: '', precio: '', costo: '', stock: '', stock_minimo: '', categoria: 'General'
+    nombre: '', descripcion: '', precio: '', costo: '', stock: '', stock_minimo: '', categoria: 'General', imagen: ''
   });
 
   const categorias = ['General', 'Alimentos', 'Ropa', 'Electrónica', 'Servicios', 'Otros'];
@@ -51,12 +51,30 @@ const Products = () => {
   const openModal = (product = null) => {
     if (product) {
       setEditingProduct(product);
-      setFormData(product);
+      setFormData({
+        ...product,
+        imagen: product.imagen || ''
+      });
     } else {
       setEditingProduct(null);
-      setFormData({ nombre: '', descripcion: '', precio: '', costo: '', stock: '', stock_minimo: '', categoria: 'General' });
+      setFormData({ nombre: '', descripcion: '', precio: '', costo: '', stock: '', stock_minimo: '', categoria: 'General', imagen: '' });
     }
     setIsModalOpen(true);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('La imagen no debe superar los 2MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, imagen: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -89,6 +107,21 @@ const Products = () => {
   };
 
   const columns = [
+    {
+      key: 'imagen',
+      label: '',
+      render: (row) => (
+        <div className="flex-shrink-0 h-10 w-10">
+          {row.imagen ? (
+            <img className="h-10 w-10 rounded-full object-cover" src={row.imagen} alt="" />
+          ) : (
+            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+              <FiPackage className="h-6 w-6 text-gray-500" />
+            </div>
+          )}
+        </div>
+      )
+    },
     { key: 'nombre', label: 'Nombre' },
     { key: 'categoria', label: 'Categoría' },
     { key: 'costo', label: 'Costo', render: (row) => `$${Number(row.costo || 0).toFixed(2)}` },
@@ -168,6 +201,23 @@ const Products = () => {
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingProduct ? 'Editar Producto' : 'Nuevo Producto'}>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-4 pb-4 border-b">
+            <div className="h-24 w-24 rounded-full border-2 border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
+              {formData.imagen ? (
+                <img src={formData.imagen} alt="Preview" className="h-full w-full object-cover" />
+              ) : (
+                <FiPackage className="h-8 w-8 text-gray-400" />
+              )}
+            </div>
+            <div>
+              <label className="cursor-pointer bg-white px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none flex items-center">
+                <FiUpload className="mr-2" /> Cambiar Imagen
+                <input type="file" className="sr-only" accept="image/*" onChange={handleImageChange} />
+              </label>
+            </div>
+            <p className="text-xs text-gray-500">Max: 2MB</p>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Nombre</label>
             <input type="text" required value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm p-2 border" />

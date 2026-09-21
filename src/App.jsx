@@ -16,6 +16,8 @@ import Users from './pages/Users';
 import Settings from './pages/Settings';
 import RegisterTenant from './pages/RegisterTenant';
 import SuperAdminTenants from './pages/SuperAdminTenants';
+import Payment from './pages/Payment';
+import SuperAdminPayments from './pages/SuperAdminPayments';
 
 function App() {
   const { loading } = useContext(AuthContext);
@@ -44,9 +46,11 @@ function App() {
           <Route path="/ventas" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
           <Route path="/ventas/nueva" element={<ProtectedRoute><NewSale /></ProtectedRoute>} />
           <Route path="/gastos" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
+          <Route path="/pagos" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
           <Route path="/configuracion" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/usuarios" element={<ProtectedRoute roles={['admin']}><Users /></ProtectedRoute>} />
           <Route path="/superadmin/comercios" element={<ProtectedRoute><SuperAdminTenants /></ProtectedRoute>} />
+          <Route path="/superadmin/pagos" element={<ProtectedRoute><SuperAdminPayments /></ProtectedRoute>} />
         </Route>
       </Routes>
     </>
