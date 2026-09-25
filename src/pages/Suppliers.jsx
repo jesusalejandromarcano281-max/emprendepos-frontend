@@ -151,7 +151,10 @@ const Suppliers = () => {
   const handleQuickProductSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/products', quickProductForm);
+      const res = await api.post('/products', {
+        nombre: quickProductForm.nombre,
+        precio: 0
+      });
       toast.success('Producto creado exitosamente');
       await fetchProducts(); // Recargar lista de productos
       setPriceForm({ ...priceForm, product_id: res.data.id }); // Seleccionarlo automáticamente
@@ -300,16 +303,12 @@ const Suppliers = () => {
       <Modal isOpen={isQuickProductModalOpen} onClose={() => setIsQuickProductModalOpen(false)} title="Crear Producto Rápido">
         <form onSubmit={handleQuickProductSubmit} className="space-y-4">
           <p className="text-sm text-gray-500 mb-4">
-            Añade un producto a tu inventario rápidamente para poder asignarle esta cotización. 
-            (Luego podrás editar sus detalles y stock desde la sección "Productos").
+            Añade el nombre del producto a tu inventario. Luego en la pantalla anterior podrás asignarle el precio de costo (cotización) que te da este proveedor.
+            El precio de venta al público quedará en $0.00 hasta que lo actualices en la sección "Productos".
           </p>
           <div>
             <label className="block text-sm font-medium text-gray-700">Nombre del Producto</label>
-            <input type="text" required value={quickProductForm.nombre} onChange={e => setQuickProductForm({...quickProductForm, nombre: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-brand-500 focus:border-brand-500 sm:text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Precio de Venta al Público (Sugerido)</label>
-            <input type="number" step="0.01" required value={quickProductForm.precio} onChange={e => setQuickProductForm({...quickProductForm, precio: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-brand-500 focus:border-brand-500 sm:text-sm" placeholder="0.00" />
+            <input type="text" required value={quickProductForm.nombre} onChange={e => setQuickProductForm({...quickProductForm, nombre: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-brand-500 focus:border-brand-500 sm:text-sm" placeholder="Ej: Harina Pan 1Kg" />
           </div>
           <div className="pt-4 flex justify-end space-x-3">
             <Button variant="secondary" onClick={() => setIsQuickProductModalOpen(false)}>Cancelar</Button>
