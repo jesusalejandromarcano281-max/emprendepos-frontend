@@ -100,7 +100,7 @@ const SuperAdminPayments = () => {
                 {payments.map((payment) => (
                   <tr key={payment.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {payment.tenant?.name || 'Desconocido'}
+                      {payment.tenant_name || 'Desconocido'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="font-bold">{payment.plan}</div>
