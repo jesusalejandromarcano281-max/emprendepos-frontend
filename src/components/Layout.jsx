@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { FiHome, FiPackage, FiUsers, FiShoppingCart, FiDollarSign, FiSettings, FiBriefcase, FiLogOut, FiMenu, FiGlobe, FiCreditCard } from 'react-icons/fi';
+import { FiHome, FiPackage, FiUsers, FiShoppingCart, FiDollarSign, FiSettings, FiBriefcase, FiLogOut, FiMenu, FiGlobe, FiCreditCard, FiTruck, FiList, FiUser } from 'react-icons/fi';
 import api from '../api/axios';
 
 const Layout = () => {
@@ -29,6 +29,8 @@ const Layout = () => {
     { to: '/clientes', label: 'Clientes', icon: <FiUsers className="mr-3" /> },
     { to: '/ventas', label: 'Ventas', icon: <FiShoppingCart className="mr-3" /> },
     { to: '/gastos', label: 'Gastos e Ingresos', icon: <FiDollarSign className="mr-3" /> },
+    { to: '/proveedores', label: 'Proveedores', icon: <FiTruck className="mr-3" /> },
+    { to: '/comparador', label: 'Comparar Precios', icon: <FiList className="mr-3" /> },
     { to: '/pagos', label: 'Mi Suscripción', icon: <FiCreditCard className="mr-3" /> },
   ];
 
@@ -74,7 +76,15 @@ const Layout = () => {
             ))}
           </div>
 
-          <div className="p-4 border-t border-slate-700">
+          <div className="p-4 border-t border-slate-700 space-y-2">
+            <NavLink
+              to="/perfil"
+              className={({ isActive }) => `flex items-center w-full px-4 py-2 text-sm font-medium rounded-md transition-colors ${isActive ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+              onClick={() => setSidebarOpen(false)}
+            >
+              <FiUser className="mr-3" />
+              Mi Perfil
+            </NavLink>
             <button
               onClick={logout}
               className="flex items-center w-full px-4 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-700 hover:text-white transition-colors"
