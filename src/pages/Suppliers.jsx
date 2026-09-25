@@ -25,6 +25,12 @@ const Suppliers = () => {
     product_id: '', precio_cotizado: ''
   });
 
+  // States para creación rápida de producto
+  const [isQuickProductModalOpen, setIsQuickProductModalOpen] = useState(false);
+  const [quickProductForm, setQuickProductForm] = useState({
+    nombre: '', precio: 0
+  });
+
   const fetchSuppliers = async () => {
     try {
       const res = await api.get('/suppliers');
@@ -142,6 +148,20 @@ const Suppliers = () => {
     }
   };
 
+  const handleQuickProductSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post('/products', quickProductForm);
+      toast.success('Producto creado exitosamente');
+      await fetchProducts(); // Recargar lista de productos
+      setPriceForm({ ...priceForm, product_id: res.data.id }); // Seleccionarlo automáticamente
+      setIsQuickProductModalOpen(false);
+      setQuickProductForm({ nombre: '', precio: 0 });
+    } catch (error) {
+      toast.error('Error al crear el producto rápido');
+    }
+  };
+
   const columns = [
     {
       key: 'icon',
@@ -234,12 +254,17 @@ const Suppliers = () => {
           <form onSubmit={handlePriceSubmit} className="flex gap-4 items-end bg-gray-50 p-4 rounded-md">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">Producto</label>
-              <select required value={priceForm.product_id} onChange={e => setPriceForm({...priceForm, product_id: e.target.value})} className="block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-brand-500 focus:border-brand-500 sm:text-sm">
-                <option value="">Seleccione un producto</option>
-                {products.map(p => (
-                  <option key={p.id} value={p.id}>{p.nombre || p.name}</option>
-                ))}
-              </select>
+              <div className="flex gap-2">
+                <select required value={priceForm.product_id} onChange={e => setPriceForm({...priceForm, product_id: e.target.value})} className="block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-brand-500 focus:border-brand-500 sm:text-sm">
+                  <option value="">Seleccione un producto</option>
+                  {products.map(p => (
+                    <option key={p.id} value={p.id}>{p.nombre || p.name}</option>
+                  ))}
+                </select>
+                <Button type="button" variant="secondary" onClick={() => setIsQuickProductModalOpen(true)} className="px-3" title="Crear nuevo producto rápido">
+                  <FiPlus />
+                </Button>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Precio</label>
@@ -271,6 +296,26 @@ const Suppliers = () => {
             )}
           </div>
         </div>
+      {/* Modal for Quick Product Creation */}
+      <Modal isOpen={isQuickProductModalOpen} onClose={() => setIsQuickProductModalOpen(false)} title="Crear Producto Rápido">
+        <form onSubmit={handleQuickProductSubmit} className="space-y-4">
+          <p className="text-sm text-gray-500 mb-4">
+            Añade un producto a tu inventario rápidamente para poder asignarle esta cotización. 
+            (Luego podrás editar sus detalles y stock desde la sección "Productos").
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Nombre del Producto</label>
+            <input type="text" required value={quickProductForm.nombre} onChange={e => setQuickProductForm({...quickProductForm, nombre: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-brand-500 focus:border-brand-500 sm:text-sm" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Precio de Venta al Público (Sugerido)</label>
+            <input type="number" step="0.01" required value={quickProductForm.precio} onChange={e => setQuickProductForm({...quickProductForm, precio: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-brand-500 focus:border-brand-500 sm:text-sm" placeholder="0.00" />
+          </div>
+          <div className="pt-4 flex justify-end space-x-3">
+            <Button variant="secondary" onClick={() => setIsQuickProductModalOpen(false)}>Cancelar</Button>
+            <Button type="submit">Crear Producto</Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
